@@ -1,5 +1,4 @@
 name: Maven Publish
-description: Builds and published a release using maven and java 8
 
 on: [ push ]
 
@@ -9,24 +8,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 8
+      - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '17'
           distribution: 'adopt'
 
       - name: Git submodule update
         run: git submodule update --init
 
-      - name: Set version env variable
-        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
-      - name: Set artifact env variable
-        run: echo "ARTIFACT=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
-      - name: Set package env variable
-        run: echo "PACKAGE=$(ls src/main/java/*/*)" >> $GITHUB_ENV
+      - name: Set env variable
+        run: |
+          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "ARTIFACT=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
+          echo "PACKAGE=$(ls src/main/java/*/*)" >> $GITHUB_ENV
 
       - name: Build with Maven
         run: mvn package
+
       - name: Automatic Releases
         uses: marvinpinto/action-automatic-releases@latest
         with:
